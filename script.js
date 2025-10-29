@@ -47,3 +47,41 @@ if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js")
     .then(() => console.log("Service Worker registrado!"));
 }
+
+function searchMember() {
+  const member = document.getElementById("memberInput").value;
+  if (!member) return;
+
+  fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=extracts&exintro=true&explaintext=true&titles=${encodeURIComponent(member + " (singer)")}`)
+    .then(response => response.json())
+    .then(data => {
+      const pages = data.query.pages;
+      const page = pages[Object.keys(pages)[0]];
+      const extract = page.extract || "Não encontramos informações sobre esse integrante.";
+      const url = `https://en.wikipedia.org/wiki/${encodeURIComponent(page.title)}`;
+
+      document.getElementById("memberInfo").innerHTML = `
+        <h3>${page.title}</h3>
+        <p>${extract}</p>
+        <a href="${url}" target="_blank">🔗 Leia mais na Wikipedia</a>
+      `;
+    });
+}
+
+navigator.mediaDevices.getUserMedia({ video: true })
+  .then(stream => {
+    document.getElementById("video").srcObject = stream;
+  });
+
+function capturePhoto() {
+  const canvas = document.getElementById("canvas");
+  const video = document.getElementById("video");
+  const context = canvas.getContext("2d");
+
+  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  // Moldura simples: texto BTS
+  context.fillStyle = "purple";
+  context.font = "20px Arial";
+  context.fillText("💜 BTS ARMY 💜", 80, 210);
+}
