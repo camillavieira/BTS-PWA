@@ -15,8 +15,16 @@ function showPosition(position) {
   fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&list=search&srsearch=BTS`)
     .then(response => response.json())
     .then(data => {
-      const info = data.query.search[0].snippet;
-      document.getElementById("output").innerHTML += `<p>${info}...</p>`;
+      const result = data.query.search[0];
+      const title = result.title;
+      const snippet = result.snippet;
+      const url = `https://en.wikipedia.org/wiki/${encodeURIComponent(title)}`;
+
+      document.getElementById("output").innerHTML += `
+        <h2>${title}</h2>
+        <p>${snippet}...</p>
+        <a href="${url}" target="_blank">Leia mais na Wikipedia</a>
+      `;
     });
 }
 
