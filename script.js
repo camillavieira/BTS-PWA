@@ -14,7 +14,6 @@ function showPosition(position) {
 
   let curiosidade = "";
 
-  // Lógica por região
   if (lat < 0 && lon < -30) {
     curiosidade = "🇧🇷 O BTS já mencionou o Brasil como um dos países com fãs mais apaixonados!";
   } else if (lat > 35 && lon > 125) {
@@ -25,21 +24,20 @@ function showPosition(position) {
     curiosidade = "🌍 O BTS tem fãs apaixonados em todos os cantos do mundo!";
   }
 
-  // Mostrar curiosidade regional
   document.getElementById("output").innerHTML += `<p>${curiosidade}</p>`;
 
-  // Buscar artigo da Wikipedia
-  fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&list=search&srsearch=BTS`)
+  // Nova chamada para obter o conteúdo completo da introdução
+  fetch(`https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=extracts&exintro=true&explaintext=true&titles=BTS`)
     .then(response => response.json())
     .then(data => {
-      const result = data.query.search[0];
-      const title = result.title;
-      const snippet = result.snippet.replace(/<\/?[^>]+(>|$)/g, ""); // remove tags HTML
-      const url = `https://en.wikipedia.org/wiki/${encodeURIComponent(title)}`;
+      const pages = data.query.pages;
+      const page = pages[Object.keys(pages)[0]];
+      const extract = page.extract;
+      const url = `https://en.wikipedia.org/wiki/BTS`;
 
       document.getElementById("output").innerHTML += `
-        <h2>${title}</h2>
-        <p>${snippet}...</p>
+        <h2>${page.title}</h2>
+        <p>${extract}</p>
         <a href="${url}" target="_blank">🔗 Leia mais na Wikipedia</a>
       `;
     });
